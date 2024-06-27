@@ -10,9 +10,9 @@ let users = [
 let tasks = [
   {
     id: 1,
-    title: "Task 1",
-    description: "Description 1",
-    status: "pending",
+    title: "Médico",
+    description: "Agendar consulta",
+    status: "Pendente",
     userId: 1,
     createdAt: new Date(),
     completedAt: null,
@@ -20,9 +20,9 @@ let tasks = [
   },
   {
     id: 2,
-    title: "Task 2",
-    description: "Description 2",
-    status: "in progress",
+    title: "Revisão",
+    description: "Revisar currículos",
+    status: "Em progresso",
     userId: 1,
     createdAt: new Date(),
     completedAt: null,
@@ -31,8 +31,8 @@ let tasks = [
 ];
 
 let categories = [
-  { id: 1, name: "Work", userId: 1 },
-  { id: 2, name: "Personal", userId: 1 },
+  { id: 1, name: "Trabalho", userId: 1 },
+  { id: 2, name: "Pessoal", userId: 1 },
 ];
 
 const addTask = (task) => {

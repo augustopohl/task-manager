@@ -11,8 +11,3 @@ input {
   @apply border-gray-300 rounded-lg shadow-sm;
   @apply appearance-none border w-full py-2 px-3 text-gray-700 leading-tight text-sm;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}

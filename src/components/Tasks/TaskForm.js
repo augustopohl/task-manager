@@ -27,7 +27,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
       title,
       description,
       status,
-      userId: 1, // Assuming user ID 1 for now
+      userId: 1,
       createdAt: new Date(),
       completedAt: status === "completed" ? new Date() : null,
       categoryId: parseInt(categoryId),
@@ -49,7 +49,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
     >
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -108,7 +108,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
       </div>
       <button
         type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-[#7C3AED] hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg text-sm "
       >
         {editTask ? "Atualizar" : "Adicionar"}
       </button>

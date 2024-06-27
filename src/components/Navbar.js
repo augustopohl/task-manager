@@ -19,7 +19,7 @@ const Navbar = () => {
               to="/tasks"
               className={({ isActive }) =>
                 isActive
-                  ? "text-[#6941C6] font-medium mr-4 border-b-2 border-b-[#6941C6] h-full flex items-center"
+                  ? "text-violet-700 font-medium mr-4 border-b-2 border-b-violet-700 h-full flex items-center"
                   : "text-[#71717A] font-medium mr-4 h-full flex items-center"
               }
             >
@@ -29,7 +29,7 @@ const Navbar = () => {
               to="/categories"
               className={({ isActive }) =>
                 isActive
-                  ? "text-[#6941C6] font-medium border-b-2 border-b-[#6941C6] h-full flex items-center"
+                  ? "text-violet-700 font-medium border-b-2 border-b-violet-700 h-full flex items-center"
                   : "text-[#71717A] font-medium h-full flex items-center"
               }
             >
@@ -42,7 +42,7 @@ const Navbar = () => {
               to="/login"
               className={({ isActive }) =>
                 isActive
-                  ? "text-[#6941C6] font-medium mr-4 border-b-2 border-[#6941C6] h-full flex items-center"
+                  ? "text-violet-700 font-medium mr-4 border-b-2 border-violet-700 h-full flex items-center"
                   : "text-[#71717A] font-medium mr-4 h-full flex items-center"
               }
             >
@@ -52,7 +52,7 @@ const Navbar = () => {
               to="/register"
               className={({ isActive }) =>
                 isActive
-                  ? "text-[#6941C6] font-medium border-b-2 border-[#6941C6] h-full flex items-center"
+                  ? "text-violet-700 font-medium border-b-2 border-violet-700 h-full flex items-center"
                   : "text-[#71717A] font-medium h-full flex items-center"
               }
             >
