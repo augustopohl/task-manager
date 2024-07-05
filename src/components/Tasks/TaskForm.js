@@ -48,7 +48,6 @@ const TaskForm = ({ editTask, setEditTask }) => {
       } else {
         await createTask(newTask);
       }
-      // Clear form fields
       setTitle("");
       setStatus("pending");
       setCategoryId("");

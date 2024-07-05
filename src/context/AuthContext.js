@@ -36,7 +36,6 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsAuthenticated(false);
     setCurrentUser(null);
-    // Optionally, make a logout API call if needed
   };
 
   return (

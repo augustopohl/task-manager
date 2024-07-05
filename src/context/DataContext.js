@@ -16,7 +16,6 @@ const DataProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // Fetch tasks and categories from API when the component mounts
   useEffect(() => {
     fetchTasks();
     fetchCategories();
