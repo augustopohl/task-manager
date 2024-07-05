@@ -7,7 +7,7 @@ const TaskList = ({ onEdit }) => {
 
   return (
     <ul className="space-y-4">
-      {tasks.map((task) => (
+      {tasks?.map((task) => (
         <TaskItem key={task.id} task={task} onEdit={onEdit} />
       ))}
     </ul>

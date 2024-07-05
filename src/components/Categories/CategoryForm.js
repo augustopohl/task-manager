@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context/DataContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const CategoryForm = ({ editCategory, setEditCategory }) => {
   const { createCategory, editCategory: updateCategory } =
     useContext(DataContext);
+  const { currentUser } = useContext(AuthContext);
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -12,21 +14,24 @@ const CategoryForm = ({ editCategory, setEditCategory }) => {
     }
   }, [editCategory]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newCategory = {
       name,
-      userId: 1, // Assuming user ID 1 for now
+      userId: currentUser.id,
     };
 
-    if (editCategory) {
-      updateCategory(editCategory.id, newCategory);
-      setEditCategory(null);
-    } else {
-      createCategory(newCategory);
+    try {
+      if (editCategory) {
+        await updateCategory(editCategory.id, newCategory);
+        setEditCategory(null);
+      } else {
+        await createCategory(newCategory);
+      }
+      setName("");
+    } catch (error) {
+      console.error("Error submitting category:", error);
     }
-
-    setName("");
   };
 
   return (
@@ -50,7 +55,7 @@ const CategoryForm = ({ editCategory, setEditCategory }) => {
         type="submit"
         className="bg-[#7C3AED] hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg text-sm focus:outline-none focus:shadow-outline"
       >
-        Adicionar
+        {editCategory ? "Atualizar" : "Adicionar"}
       </button>
     </form>
   );

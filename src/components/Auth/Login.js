@@ -1,19 +1,19 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { users } from "../../mockData";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const foundUser = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (foundUser) {
-      login(foundUser);
+    try {
+      await login({ email, password });
+    } catch (error) {
+      setError("Invalid email or password");
+      console.error("Error logging in:", error);
     }
   };
 
@@ -23,6 +23,7 @@ const Login = () => {
       className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
     >
       <h2 className="text-2xl font-bold mb-4">Login</h2>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Email

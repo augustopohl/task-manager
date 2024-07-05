@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context/DataContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const TaskForm = ({ editTask, setEditTask }) => {
   const {
@@ -7,6 +8,8 @@ const TaskForm = ({ editTask, setEditTask }) => {
     editTask: updateTask,
     categories,
   } = useContext(DataContext);
+  const { currentUser } = useContext(AuthContext);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
@@ -21,29 +24,33 @@ const TaskForm = ({ editTask, setEditTask }) => {
     }
   }, [editTask]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newTask = {
       title,
       description,
       status,
-      userId: 1,
-      createdAt: new Date(),
-      completedAt: status === "completed" ? new Date() : null,
+      userId: currentUser.id, // Ensure this is correctly set, or dynamically fetch the current user ID
+      createdAt: new Date().toISOString(), // Ensure dates are formatted correctly
+      finishedAt: status === "completed" ? new Date().toISOString() : null,
       categoryId: parseInt(categoryId),
     };
 
-    if (editTask) {
-      updateTask(editTask.id, newTask);
-      setEditTask(null);
-    } else {
-      createTask(newTask);
+    try {
+      if (editTask) {
+        await updateTask(editTask.id, newTask);
+        setEditTask(null);
+      } else {
+        await createTask(newTask);
+      }
+      // Clear form fields
+      setTitle("");
+      setDescription("");
+      setStatus("pending");
+      setCategoryId("");
+    } catch (error) {
+      console.error("Error submitting task:", error);
     }
-
-    setTitle("");
-    setDescription("");
-    setStatus("pending");
-    setCategoryId("");
   };
 
   return (
@@ -68,7 +75,6 @@ const TaskForm = ({ editTask, setEditTask }) => {
           Descrição
         </label>
         <textarea
-          type="text"
           placeholder="Insira uma descrição"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -99,7 +105,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="">Selecione uma categoria</option>
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
             </option>

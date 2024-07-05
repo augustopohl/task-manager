@@ -1,18 +1,20 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { users } from "../../mockData";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = { id: users.length + 1, username, email, password };
-    users.push(newUser);
-    login(newUser);
+    const newUser = { username, email, password };
+    try {
+      await register(newUser);
+    } catch (error) {
+      console.error("Error registering user:", error);
+    }
   };
 
   return (
@@ -50,8 +52,8 @@ const Register = () => {
           Senha
         </label>
         <input
-          type="Digite sua senha"
-          placeholder="Password"
+          type="password"
+          placeholder="Digite sua senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

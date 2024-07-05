@@ -7,7 +7,7 @@ const CategoryList = ({ onEdit }) => {
 
   return (
     <ul className="space-y-4">
-      {categories.map((category) => (
+      {categories?.map((category) => (
         <CategoryItem key={category.id} category={category} onEdit={onEdit} />
       ))}
     </ul>
