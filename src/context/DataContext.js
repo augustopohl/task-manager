@@ -25,7 +25,7 @@ const DataProvider = ({ children }) => {
   const fetchTasks = async () => {
     try {
       const response = await getTasks();
-      setTasks(response.data);
+      setTasks(response);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -44,7 +44,7 @@ const DataProvider = ({ children }) => {
   const createTask = async (task) => {
     try {
       const response = await apiCreateTask(task);
-      setTasks([...tasks, response.data]);
+      setTasks([...tasks, response]);
     } catch (error) {
       console.error("Error creating task:", error);
     }
@@ -52,8 +52,10 @@ const DataProvider = ({ children }) => {
 
   const editTask = async (id, updatedTask) => {
     try {
-      await apiUpdateTask(id, updatedTask);
-      setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+      const response = await apiUpdateTask(id, updatedTask);
+      setTasks(
+        tasks.map((task) => (task.id === id ? { ...response, id } : task))
+      );
     } catch (error) {
       console.error("Error updating task:", error);
     }

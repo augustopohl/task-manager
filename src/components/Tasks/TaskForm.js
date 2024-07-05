@@ -11,15 +11,19 @@ const TaskForm = ({ editTask, setEditTask }) => {
   const { currentUser } = useContext(AuthContext);
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
   const [categoryId, setCategoryId] = useState("");
 
   useEffect(() => {
     if (editTask) {
       setTitle(editTask.title);
-      setDescription(editTask.description);
-      setStatus(editTask.status);
+      setStatus(
+        editTask.status === 0
+          ? "in progress"
+          : editTask.status === 1
+          ? "completed"
+          : "pending"
+      );
       setCategoryId(editTask.categoryId);
     }
   }, [editTask]);
@@ -28,13 +32,14 @@ const TaskForm = ({ editTask, setEditTask }) => {
     e.preventDefault();
     const newTask = {
       title,
-      description,
-      status,
-      userId: currentUser.id, // Ensure this is correctly set, or dynamically fetch the current user ID
-      createdAt: new Date().toISOString(), // Ensure dates are formatted correctly
+      status: status === "in progress" ? 0 : status === "completed" ? 1 : 2,
+      userId: currentUser.id,
+      createdAt: new Date().toISOString(),
       finishedAt: status === "completed" ? new Date().toISOString() : null,
       categoryId: parseInt(categoryId),
     };
+
+    console.log("Submitting Task Payload: ", newTask);
 
     try {
       if (editTask) {
@@ -45,7 +50,6 @@ const TaskForm = ({ editTask, setEditTask }) => {
       }
       // Clear form fields
       setTitle("");
-      setDescription("");
       setStatus("pending");
       setCategoryId("");
     } catch (error) {
@@ -70,17 +74,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Descrição
-        </label>
-        <textarea
-          placeholder="Insira uma descrição"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
+
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Status
@@ -114,7 +108,7 @@ const TaskForm = ({ editTask, setEditTask }) => {
       </div>
       <button
         type="submit"
-        className="bg-[#7C3AED] hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg text-sm "
+        className="bg-[#7C3AED] hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg text-sm"
       >
         {editTask ? "Atualizar" : "Adicionar"}
       </button>

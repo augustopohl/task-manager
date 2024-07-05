@@ -82,6 +82,7 @@ export const getTaskById = async (id) => {
 };
 
 export const createTask = async (task) => {
+  console.log(task);
   try {
     const response = await api.post("/Tasks", task);
     console.log("Task created:", response.data);
