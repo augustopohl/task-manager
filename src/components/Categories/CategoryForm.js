@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context/DataContext";
-import { AuthContext } from "../../context/AuthContext";
 
 const CategoryForm = ({ editCategory, setEditCategory }) => {
   const { createCategory, editCategory: updateCategory } =
     useContext(DataContext);
-  const { currentUser } = useContext(AuthContext);
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (editCategory) {
@@ -18,16 +17,16 @@ const CategoryForm = ({ editCategory, setEditCategory }) => {
     e.preventDefault();
     const newCategory = {
       name,
-      userId: currentUser.id,
+      description,
     };
 
     try {
-      if (editCategory) {
-        await updateCategory(editCategory.id, newCategory);
-        setEditCategory(null);
-      } else {
-        await createCategory(newCategory);
-      }
+      // if (editCategory) {
+      //   await updateCategory(editCategory.id, newCategory);
+      //   setEditCategory(null);
+      // } else {
+      await createCategory(newCategory);
+      // }
       setName("");
     } catch (error) {
       console.error("Error submitting category:", error);
@@ -39,8 +38,8 @@ const CategoryForm = ({ editCategory, setEditCategory }) => {
       onSubmit={handleSubmit}
       className="bg-white shadow-sm border-[#E4E4E7] border-2 rounded-lg px-8 pt-6 pb-8 mb-4"
     >
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+      <div className="mb-4 flex flex-col gap-2">
+        <label className="block text-gray-700 text-sm font-bold">
           Nome da categoria
         </label>
         <input
@@ -48,6 +47,16 @@ const CategoryForm = ({ editCategory, setEditCategory }) => {
           placeholder="Digite o nome da categoria"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          className="focus:outline-none focus:shadow-outline"
+        />
+
+        <label className="block text-gray-700 text-sm font-bold">
+          Descrição
+        </label>
+        <textarea
+          placeholder="Digite uma descrição"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           className="focus:outline-none focus:shadow-outline"
         />
       </div>

@@ -1,13 +1,58 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5238",
+  baseURL: "http://127.0.0.1:8000/",
 });
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/token/refresh/",
+          {
+            refresh: refreshToken,
+          }
+        );
+
+        localStorage.setItem("accessToken", response.data.access);
+
+        originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error("Refresh token failed:", refreshError);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const getCategories = async () => {
   try {
-    const response = await api.get("/Categories");
-    console.log("Categories:", response.data);
+    const response = await api.get("/categories/");
     return response.data;
   } catch (error) {
     console.error("Error getting categories:", error);
@@ -17,7 +62,7 @@ export const getCategories = async () => {
 
 export const getCategoryById = async (id) => {
   try {
-    const response = await api.get(`/Categories/${id}`);
+    const response = await api.get(`/categories/${id}`);
     console.log("Category:", response.data);
     return response.data;
   } catch (error) {
@@ -28,7 +73,7 @@ export const getCategoryById = async (id) => {
 
 export const createCategory = async (category) => {
   try {
-    const response = await api.post("/Categories", category);
+    const response = await api.post("/categories/", category);
     console.log("Category created:", response.data);
     return response.data;
   } catch (error) {
@@ -39,7 +84,7 @@ export const createCategory = async (category) => {
 
 export const updateCategory = async (id, category) => {
   try {
-    const response = await api.put(`/Categories/${id}`, category);
+    const response = await api.put(`/categories/${id}`, category);
     console.log("Category updated:", response.data);
     return response.data;
   } catch (error) {
@@ -50,8 +95,9 @@ export const updateCategory = async (id, category) => {
 
 export const deleteCategory = async (id) => {
   try {
-    const response = await api.delete(`/Categories/${id}`);
-    console.log("Category deleted:", response.data);
+    const response = await api.delete("/categories/", {
+      data: { id },
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting category:", error);
@@ -61,8 +107,7 @@ export const deleteCategory = async (id) => {
 
 export const getTasks = async () => {
   try {
-    const response = await api.get("/Tasks");
-    console.log("Tasks:", response.data);
+    const response = await api.get("/tasks/");
     return response.data;
   } catch (error) {
     console.error("Error getting tasks:", error);
@@ -72,7 +117,7 @@ export const getTasks = async () => {
 
 export const getTaskById = async (id) => {
   try {
-    const response = await api.get(`/Tasks/${id}`);
+    const response = await api.get(`/tasks/${id}`);
     console.log("Task:", response.data);
     return response.data;
   } catch (error) {
@@ -82,9 +127,8 @@ export const getTaskById = async (id) => {
 };
 
 export const createTask = async (task) => {
-  console.log(task);
   try {
-    const response = await api.post("/Tasks", task);
+    const response = await api.post("/tasks/", task);
     console.log("Task created:", response.data);
     return response.data;
   } catch (error) {
@@ -95,7 +139,7 @@ export const createTask = async (task) => {
 
 export const updateTask = async (id, task) => {
   try {
-    const response = await api.put(`/Tasks/${id}`, task);
+    const response = await api.put(`/tasks/${id}`, task);
     console.log("Task updated:", response.data);
     return response.data;
   } catch (error) {
@@ -106,7 +150,7 @@ export const updateTask = async (id, task) => {
 
 export const deleteTask = async (id) => {
   try {
-    const response = await api.delete(`/Tasks/${id}`);
+    const response = await api.delete(`/tasks/${id}`);
     console.log("Task deleted:", response.data);
     return response.data;
   } catch (error) {

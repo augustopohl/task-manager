@@ -1,17 +1,20 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { DataProvider } from "./context/DataContext";
 
-ReactDOM.render(
+const container = document.getElementById("root");
+
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <AuthProvider>
       <DataProvider>
         <App />
       </DataProvider>
     </AuthProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );

@@ -16,15 +16,10 @@ const DataProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    fetchTasks();
-    fetchCategories();
-  }, []);
-
   const fetchTasks = async () => {
     try {
       const response = await getTasks();
-      setTasks(response);
+      setTasks(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -33,8 +28,7 @@ const DataProvider = ({ children }) => {
   const fetchCategories = async () => {
     try {
       const response = await getCategories();
-
-      setCategories(response);
+      setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -72,7 +66,10 @@ const DataProvider = ({ children }) => {
   const createCategory = async (category) => {
     try {
       const response = await apiCreateCategory(category);
-      setCategories([...categories, response]);
+
+      if (response.success) {
+        fetchCategories();
+      }
     } catch (error) {
       console.error("Error creating category:", error);
     }
@@ -99,6 +96,11 @@ const DataProvider = ({ children }) => {
       console.error("Error deleting category:", error);
     }
   };
+
+  useEffect(() => {
+    fetchTasks();
+    fetchCategories();
+  }, []);
 
   return (
     <DataContext.Provider

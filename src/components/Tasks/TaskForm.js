@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DataContext } from "../../context/DataContext";
-import { AuthContext } from "../../context/AuthContext";
 
 const TaskForm = ({ editTask, setEditTask }) => {
   const {
@@ -8,11 +7,11 @@ const TaskForm = ({ editTask, setEditTask }) => {
     editTask: updateTask,
     categories,
   } = useContext(DataContext);
-  const { currentUser } = useContext(AuthContext);
 
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("pending");
-  const [categoryId, setCategoryId] = useState("");
+  const [priority, setPriority] = useState(0); // Estado para a prioridade
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   useEffect(() => {
     if (editTask) {
@@ -24,22 +23,28 @@ const TaskForm = ({ editTask, setEditTask }) => {
           ? "completed"
           : "pending"
       );
-      setCategoryId(editTask.categoryId);
+      setPriority(editTask.priority || 0);
+      setSelectedCategories(editTask.categories || []);
     }
   }, [editTask]);
+
+  const handleCategoryChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions).map((option) =>
+      Number(option.value)
+    );
+    setSelectedCategories(selectedOptions);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newTask = {
       title,
       status: status === "in progress" ? 0 : status === "completed" ? 1 : 2,
-      userId: currentUser.id,
-      createdAt: new Date().toISOString(),
-      finishedAt: status === "completed" ? new Date().toISOString() : null,
-      categoryId: parseInt(categoryId),
+      priority, // Adicionando a prioridade no payload
+      description: "asdasdasdas",
+      categories: selectedCategories,
+      created_at: new Date().toISOString(),
     };
-
-    console.log("Submitting Task Payload: ", newTask);
 
     try {
       if (editTask) {
@@ -50,7 +55,8 @@ const TaskForm = ({ editTask, setEditTask }) => {
       }
       setTitle("");
       setStatus("pending");
-      setCategoryId("");
+      setPriority(0); // Resetando a prioridade
+      setSelectedCategories([]);
     } catch (error) {
       console.error("Error submitting task:", error);
     }
@@ -88,23 +94,43 @@ const TaskForm = ({ editTask, setEditTask }) => {
           <option value="completed">Finalizada</option>
         </select>
       </div>
+
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
-          Categoria
+          Prioridade
         </label>
         <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
+          value={priority}
+          onChange={(e) => setPriority(Number(e.target.value))}
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
-          <option value="">Selecione uma categoria</option>
+          <option value={0}>Baixa</option>
+          <option value={1}>Média</option>
+          <option value={2}>Alta</option>
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Categorias
+        </label>
+        <select
+          multiple
+          value={selectedCategories}
+          onChange={handleCategoryChange}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        >
           {categories?.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
             </option>
           ))}
         </select>
+        <small className="text-gray-500">
+          Segure Ctrl ou Command para selecionar múltiplas categorias
+        </small>
       </div>
+
       <button
         type="submit"
         className="bg-[#7C3AED] hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg text-sm"

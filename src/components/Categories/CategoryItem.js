@@ -10,7 +10,10 @@ const CategoryItem = ({ category, onEdit }) => {
 
   return (
     <li className="bg-white shadow-sm border-[#E4E4E7] rounded-lg px-8 pt-6 pb-8 mb-4 flex justify-between items-center">
-      <span className="text-xl font-bold">{category.name}</span>
+      <div className="flex flex-col gap-2">
+        <span className="text-xl font-bold">{category.name}</span>
+        <span className="text-xl font-bold">{category.description}</span>
+      </div>
       <div className="space-x-4">
         <button
           onClick={() => onEdit(category)}
