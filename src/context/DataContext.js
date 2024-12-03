@@ -8,13 +8,25 @@ import {
   createCategory as apiCreateCategory,
   updateCategory as apiUpdateCategory,
   deleteCategory as apiDeleteCategory,
+  getUsers,
+  deleteCategory,
 } from "../api/apiService";
 
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [categories, setCategories] = useState([]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
 
   const fetchTasks = async () => {
     try {
@@ -37,7 +49,9 @@ const DataProvider = ({ children }) => {
   const createTask = async (task) => {
     try {
       const response = await apiCreateTask(task);
-      setTasks([...tasks, response]);
+      if (response.success) {
+        fetchTasks();
+      }
     } catch (error) {
       console.error("Error creating task:", error);
     }
@@ -46,9 +60,9 @@ const DataProvider = ({ children }) => {
   const editTask = async (id, updatedTask) => {
     try {
       const response = await apiUpdateTask(id, updatedTask);
-      setTasks(
-        tasks.map((task) => (task.id === id ? { ...response, id } : task))
-      );
+      if (response.success) {
+        fetchTasks();
+      }
     } catch (error) {
       console.error("Error updating task:", error);
     }
@@ -56,8 +70,10 @@ const DataProvider = ({ children }) => {
 
   const removeTask = async (id) => {
     try {
-      await apiDeleteTask(id);
-      setTasks(tasks.filter((task) => task.id !== id));
+      const response = await apiDeleteTask(id);
+      if (response.success) {
+        fetchTasks();
+      }
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -90,22 +106,24 @@ const DataProvider = ({ children }) => {
 
   const removeCategory = async (id) => {
     try {
-      await apiDeleteCategory(id);
-      setCategories(categories.filter((category) => category.id !== id));
+      await deleteCategory(id);
+      setCategories((prev) => prev.filter((category) => category.id !== id));
     } catch (error) {
-      console.error("Error deleting category:", error);
+      throw new Error("Erro ao remover a categoria.");
     }
   };
 
   useEffect(() => {
     fetchTasks();
     fetchCategories();
+    fetchUsers();
   }, []);
 
   return (
     <DataContext.Provider
       value={{
         tasks,
+        users,
         categories,
         fetchCategories,
         createTask,
@@ -114,6 +132,7 @@ const DataProvider = ({ children }) => {
         createCategory,
         editCategory,
         removeCategory,
+        getUsers,
       }}
     >
       {children}

@@ -4,15 +4,29 @@ import { DataContext } from "../../context/DataContext";
 const CategoryItem = ({ category, onEdit }) => {
   const { removeCategory } = useContext(DataContext);
 
-  const handleDelete = () => {
-    removeCategory(category.id);
+  console.log(category);
+
+  const handleDelete = async () => {
+    if (
+      window.confirm(
+        `Tem certeza de que deseja excluir a categoria "${category.name}"?`
+      )
+    ) {
+      try {
+        await removeCategory(category.id);
+        console.log("Categoria excluída com sucesso!");
+      } catch (error) {
+        console.error("Erro ao excluir categoria:", error);
+        alert("Erro ao excluir categoria. Tente novamente.");
+      }
+    }
   };
 
   return (
     <li className="bg-white shadow-sm border-[#E4E4E7] rounded-lg px-8 pt-6 pb-8 mb-4 flex justify-between items-center">
       <div className="flex flex-col gap-2">
         <span className="text-xl font-bold">{category.name}</span>
-        <span className="text-xl font-bold">{category.description}</span>
+        <span className="text-md">{category.description}</span>
       </div>
       <div className="space-x-4">
         <button

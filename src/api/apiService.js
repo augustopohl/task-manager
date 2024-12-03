@@ -50,6 +50,17 @@ api.interceptors.response.use(
   }
 );
 
+export const getUsers = async () => {
+  try {
+    const response = await api.get("/core/users/");
+    console.log("Users fetched:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting users:", error);
+    throw error;
+  }
+};
+
 export const getCategories = async () => {
   try {
     const response = await api.get("/categories/");
@@ -98,6 +109,7 @@ export const deleteCategory = async (id) => {
     const response = await api.delete("/categories/", {
       data: { id },
     });
+    console.log("Category deleted:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error deleting category:", error);
@@ -137,10 +149,9 @@ export const createTask = async (task) => {
   }
 };
 
-export const updateTask = async (id, task) => {
+export const updateTask = async (task) => {
   try {
-    const response = await api.put(`/tasks/${id}`, task);
-    console.log("Task updated:", response.data);
+    const response = await api.post(`/tasks/`, task);
     return response.data;
   } catch (error) {
     console.error("Error updating task:", error);
@@ -151,7 +162,6 @@ export const updateTask = async (id, task) => {
 export const deleteTask = async (id) => {
   try {
     const response = await api.delete(`/tasks/${id}`);
-    console.log("Task deleted:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error deleting task:", error);

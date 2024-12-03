@@ -23,7 +23,7 @@ const Navbar = () => {
                   : "text-[#71717A] font-medium mr-4 h-full flex items-center"
               }
             >
-              Tarefas
+              Suas tarefas
             </NavLink>
             <NavLink
               to="/categories"

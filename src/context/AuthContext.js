@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -19,8 +20,13 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
+      const decodedToken = jwtDecode(access);
+
+      console.log(decodedToken);
       setIsAuthenticated(true);
-      setCurrentUser(response.data);
+      setCurrentUser({
+        userId: decodedToken.user_id,
+      });
     } catch (error) {
       console.error("Error logging in:", error);
     }
@@ -49,7 +55,16 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      setIsAuthenticated(true);
+      try {
+        const decodedToken = jwtDecode(token);
+        setIsAuthenticated(true);
+        setCurrentUser({
+          userId: decodedToken.user_id,
+        });
+      } catch (error) {
+        console.error("Invalid token:", error);
+        logout();
+      }
     }
   }, []);
 
